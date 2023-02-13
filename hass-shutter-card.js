@@ -1,3 +1,12 @@
+/**
+ * Edited content from here: https://github.com/hibob224/hass-shutter-card/commit/844a851109aaa33a5cb7d8d88685f77cc5d87d8f
+ * 
+ * what changes?
+ * - line 36f --> changed to entity.invert_update_percentage
+ * - line 198f --> changed to entity.invert_ui_percentage
+ * 
+ */
+
 class ShutterCard extends HTMLElement {
   set hass(hass) {
     const _this = this;
@@ -33,8 +42,8 @@ class ShutterCard extends HTMLElement {
         }
 
         let invertPercentage = false;
-        if (entity && entity.invert_percentage) {
-          invertPercentage = entity.invert_percentage;
+        if (entity && entity.invert_update_percentage) {
+          invertPercentage = entity.invert_update_percentage;
         }
           
         let shutter = document.createElement('div');
@@ -195,8 +204,8 @@ class ShutterCard extends HTMLElement {
       }
 
       let invertPercentage = false;
-      if (entity && entity.invert_percentage) {
-        invertPercentage = entity.invert_percentage;
+      if (entity && entity.invert_ui_percentage) {
+        invertPercentage = entity.invert_ui_percentage;
       }
         
       const shutter = _this.card.querySelector('div[data-shutter="' + entityId +'"]');
@@ -213,13 +222,17 @@ class ShutterCard extends HTMLElement {
       
       if (!_this.isUpdating) {
         shutter.querySelectorAll('.sc-shutter-position').forEach(function (shutterPosition) {
-          shutterPosition.innerHTML = currentPosition + '%';
+          if (invertPercentage) {
+            shutterPosition.innerHTML = currentPosition + '%';
+          } else {
+            shutterPosition.innerHTML = 100 - currentPosition + '%';
+          }
         })
 
         if (invertPercentage) {
-          _this.setPickerPositionPercentage(currentPosition, picker, slide);
-        } else {
           _this.setPickerPositionPercentage(100 - currentPosition, picker, slide);
+        } else {
+          _this.setPickerPositionPercentage(currentPosition, picker, slide);
         }
       }
     });
